@@ -10,7 +10,7 @@ But once data tables are built, a tool can be edited and run
 stand alone with its only run-time dependency on the `tsugi-php` library
 loaded from Packagist.
 
-**Note:** I still have more work to do to refacto the Tsugi repository into its various parts
+**Note:** I still have more work to do to refactor the Tsugi repository into its various parts
 that can be used independently.
 
 Installation
