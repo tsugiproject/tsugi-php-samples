@@ -2,7 +2,7 @@
 Tsugi Samples
 =============
 
-This shows how to build a super-simple Tsugi application.  For now, 
+This contains a number super-simple Tsugi applications.  For now, 
 you still have to checkout the main Tsugi, install it and set up the
 databases.  I have not yet pulled the table setup capability out separately.
 
