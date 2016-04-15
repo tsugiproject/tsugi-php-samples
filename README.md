@@ -4,12 +4,14 @@ Tsugi Samples
 
 This shows how to build a super-simple Tsugi application.  For now, 
 you still have to checkout the main Tsugi, install it and set up the
-databases.  I have not yet pulled that capability out separately.
+databases.  I have not yet pulled the table setup capability out separately.
 
 But once data tables are built, a tool can be edited and run 
-stand alone.
+stand alone with its only run-time dependency on the `tsugi-php` library
+loaded from Packagist.
 
-The refactor of csev/tsugi into its various parts will continue.
+**Note:** I still have more work to do to refactor the Tsugi repository into its various parts
+that can be used independently.
 
 Installation
 ------------
