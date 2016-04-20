@@ -7,7 +7,7 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Blob\BlobUtil;
 
 // Sanity checks
-$LTI = LTIX::requireData();
+$LAUNCH = LTIX::requireData();
 
 // Model
 $p = $CFG->dbprefix;

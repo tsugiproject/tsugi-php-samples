@@ -5,7 +5,7 @@ require_once "files_util.php";
 use \Tsugi\Core\LTIX;
 
 // Sanity checks
-$LTI = LTIX::requireData();
+$LAUNCH = LTIX::requireData();
 
 $fn = $_REQUEST['file'];
 if ( strlen($fn) < 1 ) {
