@@ -12,6 +12,8 @@ configured, and set up the databases for Tsugi in a folder like:
 
     htdocs/tsugi
 
+Simple Installation and Configuration
+-------------------------------------
 
 You probably want to fork this repository before you check it out
 so you can check your code into your own copy of this repo into a peer
@@ -19,10 +21,6 @@ folder right next to `htdocs/tsugi`.
 
     cd htdocs
     git clone https://github.com/YOUR_GITHUB/tsugi-php-samples.git 
-
-
-Simple Installation and Configuration
--------------------------------------
 
 You will need to inform Tsugi to search the new tool's folder
 for files like `index.php`, `register.php`, and `database.php`.
