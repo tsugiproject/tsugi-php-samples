@@ -2,7 +2,8 @@
 Tsugi Samples
 =============
 
-This contains a number super-simple Tsugi applications.  
+This is a component of the [Tsugi PHP Project](https://github.com/csev/tsugi)
+and contains a number super-simple Tsugi applications.  
 
 Pre-Requisites
 --------------
