@@ -8,13 +8,5 @@
 .idea
 *.swp
 *.bak
-vendor
-composer.phar
-composer.lock
 ehthumbs.db
-config.php
-upgrading.php
-phpunit.phar
-phpunit.xml
 _files
-local
