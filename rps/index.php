@@ -15,12 +15,30 @@ if ( $USER->instructor && isset($_POST['reset']) ) {
     return;
 }
 
+$OUTPUT->header();
+$OUTPUT->bodyStart();
 ?>
-<html><head><title><?php _e("Playing Rock Paper Scissors in"); ?>
-<?php echo(htmlent_utf8($CONTEXT->title)); ?>
-</title>
-<script type="text/javascript"
-src="<?php echo($CFG->staticroot); ?>/static/js/jquery-1.10.2.min.js"></script>
+<form id="rpsform" method="post">
+<input type="submit" id="rock" name="rock" value="<?php _e("Rock"); ?>"/>
+<input type="submit" id="paper" name="paper" value="<?php _e("Paper"); ?>"/>
+<input type="submit" id="scissors" name="scissors" value="<?php _e("Scissors"); ?>"/>
+<?php if ( $USER->instructor ) { ?>
+<input type="submit" name="reset" value="<?php _e("Reset"); ?>"/>
+<?php } ?>
+</form>
+<p id="error" style="color:red"></p>
+<p id="success" style="color:green"></p>
+<p id="status" style="display:none">
+<img id="spinner" src="spinner.gif">
+<span id="statustext" style="color:orange"></span>
+</p>
+<div>
+<p><b><?php _e("Leaderboard"); ?></b></p>
+<p id="leaders">
+</p>
+<?php
+$OUTPUT->footerStart();
+?>
 <script type="text/javascript">
 $(document).ready(function(){
   window.console && console.log('Hello JQuery..');
@@ -36,6 +54,7 @@ I18N.waiting = '<?php _e("Waiting for opponent...");?>';
 I18N.tied = '<?php _e("You tied %s");?>';
 I18N.beat = '<?php _e("You defeated %s");?>';
 I18N.lost = '<?php _e("You lost to %s");?>';
+console.log(I18N.lost);
 
 function play(strategy) {
     $("#success").html("");
@@ -114,26 +133,5 @@ function leaders() {
 // Run for the first time
 leaders();
 </script>
-
-</head>
-<body>
-<form id="rpsform" method="post">
-<input type="submit" id="rock" name="rock" value="<?php _e("Rock"); ?>"/>
-<input type="submit" id="paper" name="paper" value="<?php _e("Paper"); ?>"/>
-<input type="submit" id="scissors" name="scissors" value="<?php _e("Scissors"); ?>"/>
-<?php if ( $USER->instructor ) { ?>
-<input type="submit" name="reset" value="<?php _e("Reset"); ?>"/>
-<?php } ?>
-</form>
-<p id="error" style="color:red"></p>
-<p id="success" style="color:green"></p>
-<p id="status" style="display:none">
-<img id="spinner" src="spinner.gif">
-<span id="statustext" style="color:orange"></span>
-</p>
-<div>
-<p><b><?php _e("Leaderboard"); ?></b></p>
-<p id="leaders">
-</p>
 <?php
-$OUTPUT->footer();
+$OUTPUT->footerEnd();
