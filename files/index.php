@@ -52,6 +52,8 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 $OUTPUT->welcomeUserCourse();
 
+echo("<p>Data root: ".$CFG->dataroot."</p>\n");
+
 $foldername = getFolderName();
 Debug::log($foldername);
 if ( !file_exists($foldername) ) mkdir ($foldername);
