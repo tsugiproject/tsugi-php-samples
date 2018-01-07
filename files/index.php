@@ -9,6 +9,10 @@ use \Tsugi\Blob\BlobUtil;
 // Sanity checks
 $LAUNCH = LTIX::requireData();
 
+if ( ! isset($CFG->dataroot) || ! is_string($CFG->dataroot) ) {
+    die_with_error_log('$CFG->dataroot is not set');
+}
+
 // Model
 $p = $CFG->dbprefix;
 
