@@ -14,15 +14,16 @@ if ( strlen($id) < 1 ) {
 }
 
 $p = $CFG->dbprefix;
-$stmt = $PDOX->prepare("SELECT file_name FROM {$p}blob_file
+$stmt = $PDOX->prepare("SELECT file_name, path FROM {$p}blob_file
             WHERE file_id = :ID AND context_id = :CID");
 $stmt->execute(array(":ID" => $id, ":CID" => $CONTEXT->id));
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-$fn = $row['file_name'];
-
 if ( $row === false ) {
     die("File not found");
 }
+
+$fn = $row['file_name'];
+$path = $row['path'];
 
 if ( isset($_POST["doDelete"]) ) {
     $stmt = $PDOX->prepare("DELETE FROM {$p}blob_file
@@ -37,6 +38,9 @@ if ( isset($_POST["doDelete"]) ) {
 $OUTPUT->header();
 $OUTPUT->flashMessages();
 
+if ( strlen($path) > 0 ) {
+    echo '<h4 style="color:orange">Note this will not delete the blob on disk at: ' .htmlent_utf8($path). "</h4>\n";
+}
 echo '<h4 style="color:red">Are you sure you want to delete: ' .htmlent_utf8($fn). "</h4>\n";
 ?>
 <form name=myform enctype="multipart/form-data" method="post">
