@@ -19,25 +19,24 @@ if( isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] == 1) {
 
 if( isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] == 0)
 {
-    $filename = basename($_FILES['uploaded_file']['name']);
-    if ( strpos($filename, '.php') !== false ) {
-        $_SESSION['error'] = 'Error: Wrong file type.';
-        header( 'Location: '.addSession('index.php') ) ;
+    $fdes = $_FILES['uploaded_file'];
+    $filename = isset($fdes['name']) ? basename($fdes['name']) : false;
+
+    // Sanity-check the file
+    $safety = BlobUtil::checkFileSafety($fdes);
+    if ( $safety !== true ) {
+        $_SESSION['error'] = "Error: ".$safety;
+        error_log("Upload Error: ".$safety);
+        header( 'Location: '.addSession('index') ) ;
         return;
     }
 
-    $fp = fopen($_FILES['uploaded_file']['tmp_name'], "rb");
-    $stmt = $PDOX->prepare("INSERT INTO {$p}blob_file
-        (context_id, file_name, contenttype, content, created_at)
-        VALUES (?, ?, ?, ?, NOW())");
-
-    $stmt->bindParam(1, $CONTEXT->id);
-    $stmt->bindParam(2, $filename);
-    $stmt->bindParam(3, $_FILES['uploaded_file']['type']);
-    $stmt->bindParam(4, $fp, PDO::PARAM_LOB);
-    $PDOX->beginTransaction();
-    $stmt->execute();
-    $PDOX->commit();
+    $blob_id = BlobUtil::uploadFileToBlob($fdes);
+    if ( $blob_id === false ) {
+        $_SESSION['error'] = 'Problem storing file in server: '.$filename;
+        header( 'Location: '.addSession('index') ) ;
+        return;
+    }
 
     $_SESSION['success'] = 'File uploaded';
     header( 'Location: '.addSession('index.php') ) ;
