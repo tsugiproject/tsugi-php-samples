@@ -1,16 +1,25 @@
 <?php
 require_once "../config.php";
 
+use \Tsugi\Util\LTI;
+use \Tsugi\UI\Output;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Blob\BlobUtil;
+
+$p = $CFG->dbprefix;
+
+// Sometimes, if the maxUpload_SIZE is exceeded, it deletes all of $_POST
+// Thus losing our session :(
+if ( $_SERVER['REQUEST_METHOD'] == 'POST' && count($_POST) == 0 ) {
+    die('Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.');
+}
 
 // Sanity checks
 $LAUNCH = LTIX::requireData(array(LTIX::CONTEXT, LTIX::LINK));
 
 if ( ! $USER->instructor ) die("Must be instructor");
 
-// Model
-$p = $CFG->dbprefix;
+// Other times, we see an error indication on bad upload that does not delete all the $_POST
 if( isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] == 1) {
     $_SESSION['error'] = 'Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.';
     header( 'Location: '.addSession('index.php') ) ;
@@ -43,9 +52,9 @@ if( isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] == 0)
     return;
 }
 
-// Sometimes, if the maxUpload_SIZE is exceeded, it deletes all of $_POST
+// If we got a post but no file...
 if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
-    $_SESSION['error'] = 'Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.';
+    $_SESSION['error'] = 'Please choose a file to upload';
     header( 'Location: '.addSession('index.php') ) ;
     return;
 }
@@ -56,15 +65,18 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 $OUTPUT->welcomeUserCourse();
 
+// TODO: Make this a method in BlobUtil
 $stmt = $PDOX->prepare("SELECT file_id, file_name FROM {$p}blob_file
         WHERE context_id = :CI");
 $stmt->execute(array(":CI" => $CONTEXT->id));
 
+echo("<ul>\n");
 $count = 0;
 while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
     $id = $row['file_id'];
     $fn = $row['file_name'];
-    echo '<li><a href="blob_serve.php?id='.$id.'" target="_new">'.htmlent_utf8($fn).'</a>';
+    $serve = BlobUtil::getAccessUrlForBlob($id);
+    echo '<li><a href="'.addSession($serve).'" target="_blank">'.htmlentities($fn).'</a>';
     if ( $USER->instructor ) {
         echo ' (<a href="blob_delete.php?id='.$id.'">Delete</a>)';
     }
@@ -83,7 +95,22 @@ if ( $USER->instructor ) { ?>
    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo(BlobUtil::maxUpload());?>000000" />
    <input type="submit" name="submit" value="Upload"></p>
 </form>
+<!-- A little debug output: -->
 <?php
+    if ( isset($CFG->dataroot) && $CFG->dataroot ) {
+        if ( is_writeable($CFG->dataroot) ) {
+            echo("<p>Note: Storing blobs in the file system at ");
+            echo(htmlentities($CFG->dataroot));
+            echo(".");
+        } else {
+            echo('<p style="background: pink;">Warning: Storing blobs in the database as because ');
+            echo(htmlentities($CFG->dataroot));
+            echo(" is not writeable.");
+        }
+    } else {
+        echo("<p>Note: Storing blobs in the database.\n");
+    }
+    echo("</p>\n");
 }
 
 $OUTPUT->footer();
