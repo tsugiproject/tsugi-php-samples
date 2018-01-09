@@ -40,7 +40,7 @@ if( isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] == 0)
         return;
     }
 
-    $blob_id = BlobUtil::uploadFileToBlob($fdes);
+    $blob_id = BlobUtil::uploadToBlob($fdes);
     if ( $blob_id === false ) {
         $_SESSION['error'] = 'Problem storing file in server: '.$filename;
         header( 'Location: '.addSession('index') ) ;
