@@ -32,7 +32,7 @@ if( isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] == 0)
     $filename = isset($fdes['name']) ? basename($fdes['name']) : false;
 
     // Sanity-check the file
-    $safety = BlobUtil::checkFileSafety($fdes);
+    $safety = BlobUtil::validateUpload($fdes);
     if ( $safety !== true ) {
         $_SESSION['error'] = "Error: ".$safety;
         error_log("Upload Error: ".$safety);
