@@ -5,6 +5,7 @@ use \Tsugi\Grades\GradeUtil;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Util\LTI;
 use \Tsugi\Util\Caliper;
+use \Tsugi\UI\Output;
 
 // Retrieve the launch data if present
 $LAUNCH = LTIX::requireData();
@@ -21,7 +22,7 @@ if ( isset($_POST['grade']) )  {
 
     // Use LTIX to send the grade back to the LMS.
     $debug_log = array();
-    $retval = LTIX::gradeSend($gradetosend, false, $debug_log);
+    $retval = $LAUNCH->result->gradeSend($gradetosend, false, $debug_log);
     $_SESSION['debug_log'] = $debug_log;
 
     if ( $retval === true ) {
@@ -68,7 +69,7 @@ var_dump($LINK);
 
 echo("\n<hr/>\n");
 echo("Session data (low level):\n");
-echo(safe_var_dump($_SESSION));
+echo(Output::safe_var_dump($_SESSION));
 
 $OUTPUT->footer();
 
