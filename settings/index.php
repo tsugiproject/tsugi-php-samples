@@ -1,6 +1,7 @@
 <?php
 require_once "../config.php";
 
+use \Tsugi\Util\U;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Grades\GradeUtil;
 use \Tsugi\Core\Settings;
@@ -13,15 +14,15 @@ $displayname = $USER->displayname;
 
 // Handle the incoming post saving the settings form
 if ( SettingsForm::handleSettingsPost() ) {
-    $_SESSION['debug_log'] = Settings::getDebugArray();
+    $_SESSION['debug_log'] = $LAUNCH->link->settingsDebug();
     header( 'Location: '.addSession('index.php') ) ;
     return;
 }
 
 // Handle our own manual set of the manual_key setting
 if ( isset($_POST['manual_key']) ) {
-    Settings::linkSet('manual_key', $_POST['manual_key']);
-    $_SESSION['debug_log'] = Settings::getDebugArray();
+    $LAUNCH->link->settingsSet('manual_key', $_POST['manual_key']);
+    $_SESSION['debug_log'] = $LAUNCH->link->settingsDebug();
     $_SESSION['success'] = "Setting updated";
     header( 'Location: '.addSession('index.php') ) ;
     return;
@@ -54,11 +55,11 @@ if ( $USER->instructor ) {
 }
 
 // Load the old values for the settings
-$sk = Settings::linkGet('sample_key');
-echo("<p>The currentsetting for sample_key is: <b>".htmlent_utf8($sk)."</b></p>\n");
+$sk = $LAUNCH->link->settingsGet('sample_key');
+echo("<p>The current setting for sample_key is: <b>".htmlent_utf8($sk)."</b></p>\n");
 
-$mk = Settings::linkGet('manual_key');
-echo("<p>The currentsetting for manual_key is: <b>".htmlent_utf8($mk)."</b></p>\n");
+$mk = $LAUNCH->link->settingsGet('manual_key');
+echo("<p>The current setting for manual_key is: <b>".htmlent_utf8($mk)."</b></p>\n");
 
 // Lets show how to set a setting in our own code
 if ( $USER->instructor ) {
@@ -78,7 +79,18 @@ if ( isset($_SESSION['debug_log']) && count($_SESSION['debug_log']) > 0) {
 }
 unset($_SESSION['debug_log']);
 
-echo("\n<hr/>\n<pre>Global Tsugi Objects:\n\n");
+// Check the GetAll and Set operations by putting some fun into the context
+$allSettings = $LAUNCH->context->settingsGetAll();
+$fun = U::get($allSettings, 'fun', 0) + 1;
+$LAUNCH->context->settingsSet('fun', $fun);
+$allSettings = $LAUNCH->context->settingsGetAll();
+
+echo("\n<pre>\n");
+echo("Context Settings Log:\n");
+$OUTPUT->dumpDebugArray($LAUNCH->context->settingsDebug());
+echo("Context Settings Data:\n");
+var_dump($allSettings);
+echo("Global Tsugi Objects:\n");
 var_dump($USER);
 var_dump($CONTEXT);
 var_dump($LINK);
